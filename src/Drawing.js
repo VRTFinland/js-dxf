@@ -3,6 +3,7 @@ const Layer = require('./Layer');
 const Line = require('./Line');
 const Arc = require('./Arc');
 const Circle = require('./Circle');
+const Point = require('./Point');
 const Text = require('./Text');
 const Polyline = require('./Polyline');
 
@@ -72,6 +73,16 @@ class Drawing
         this.activeLayer.addShape(new Arc(point, r, startAngle, endAngle));
         return this;
     }
+
+    /**
+     * @param {array} point - Center point  [x, y, z]
+     */
+    drawPoint(point)
+    {
+        this.activeLayer.addShape(new Point(point));
+        return this;
+    }
+
 
     /**
      * @param {array} point - Center point  [x, y, z]
