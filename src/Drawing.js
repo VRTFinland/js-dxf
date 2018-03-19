@@ -3,6 +3,7 @@ const Layer = require('./Layer');
 const Line = require('./Line');
 const Arc = require('./Arc');
 const Circle = require('./Circle');
+const Point = require('./Point');
 const Text = require('./Text');
 const Polyline = require('./Polyline');
 
@@ -55,51 +56,58 @@ class Drawing
         return this;
     }
 
-    drawLine(x1, y1, x2, y2)
+    drawLine(p1, p2)
     {
-        this.activeLayer.addShape(new Line(x1, y1, x2, y2));
+        this.activeLayer.addShape(new Line(p1, p2));
         return this;
     }
 
     /**
-     * @param {number} x1 - Center x
-     * @param {number} y1 - Center y
+     * @param {array} point - Center point  [x, y, z]
      * @param {number} r - radius
      * @param {number} startAngle - degree 
      * @param {number} endAngle - degree 
      */
-    drawArc(x1, y1, r, startAngle, endAngle)
+    drawArc(point, r, startAngle, endAngle)
     {
-        this.activeLayer.addShape(new Arc(x1, y1, r, startAngle, endAngle));
+        this.activeLayer.addShape(new Arc(point, r, startAngle, endAngle));
         return this;
     }
 
     /**
-     * @param {number} x1 - Center x
-     * @param {number} y1 - Center y
+     * @param {array} point - Center point  [x, y, z]
+     */
+    drawPoint(point)
+    {
+        this.activeLayer.addShape(new Point(point));
+        return this;
+    }
+
+
+    /**
+     * @param {array} point - Center point  [x, y, z]
      * @param {number} r - radius
      */
-    drawCircle(x1, y1, r)
+    drawCircle(point, r)
     {
-        this.activeLayer.addShape(new Circle(x1, y1, r));
+        this.activeLayer.addShape(new Circle(point, r));
         return this;
     }
 
     /**
-     * @param {number} x1 - x
-     * @param {number} y1 - y
+     * @param {array} point - [x1, x2, x3]
      * @param {number} height - Text height
      * @param {number} rotation - Text rotation
      * @param {string} value - the string itself
      */
-    drawText(x1, y1, height, rotation, value)
+    drawText(point, height, rotation, value)
     {
-        this.activeLayer.addShape(new Text(x1, y1, height, rotation, value));
+        this.activeLayer.addShape(new Text(point, height, rotation, value));
         return this;
     }
 
     /**
-     * @param {array} points - Array of points like [ [x1, y1], [x2, y2]... ] 
+     * @param {array} points - Array of points like [ [x1, y1, z1], [x2, y2, z2]... ]
      */
     drawPolyline(points)
     {
