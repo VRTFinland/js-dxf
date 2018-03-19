@@ -7,17 +7,15 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 var Arc = function () {
     /**
-     * @param {number} x1 - Center x
-     * @param {number} y1 - Center y
+     * @param {array} point - Center point  [x, y, z]
      * @param {number} r - radius
      * @param {number} startAngle - degree 
      * @param {number} endAngle - degree 
      */
-    function Arc(x1, y1, r, startAngle, endAngle) {
+    function Arc(point, r, startAngle, endAngle) {
         _classCallCheck(this, Arc);
 
-        this.x1 = x1;
-        this.y1 = y1;
+        this.point = point;
         this.r = r;
         this.startAngle = startAngle;
         this.endAngle = endAngle;
@@ -29,7 +27,7 @@ var Arc = function () {
             //https://www.autodesk.com/techpubs/autocad/acadr14/dxf/line_al_u05_c.htm
             var s = "0\nARC\n";
             s += "8\n" + this.layer.name + "\n";
-            s += "10\n" + this.x1 + "\n20\n" + this.y1 + "\n30\n0\n";
+            s += "10\n" + this.point[0] + "\n20\n" + this.point[1] + "\n30\n" + (this.point[2] || 0) + "\n";
             s += "40\n" + this.r + "\n50\n" + this.startAngle + "\n51\n" + this.endAngle + "\n";
             return s;
         }
@@ -49,15 +47,13 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 var Circle = function () {
     /**
-     * @param {number} x1 - Center x
-     * @param {number} y1 - Center y
+     * @param {array} point - Center point  [x, y, z]
      * @param {number} r - radius
      */
-    function Circle(x1, y1, r) {
+    function Circle(point, r) {
         _classCallCheck(this, Circle);
 
-        this.x1 = x1;
-        this.y1 = y1;
+        this.point = point;
         this.r = r;
     }
 
@@ -67,7 +63,7 @@ var Circle = function () {
             //https://www.autodesk.com/techpubs/autocad/acadr14/dxf/circle_al_u05_c.htm
             var s = "0\nCIRCLE\n";
             s += "8\n" + this.layer.name + "\n";
-            s += "10\n" + this.x1 + "\n20\n" + this.y1 + "\n30\n0\n";
+            s += "10\n" + this.point[0] + "\n20\n" + this.point[1] + "\n30\n" + (this.point[2] || 0) + "\n";
             s += "40\n" + this.r + "\n";
             return s;
         }
@@ -141,13 +137,11 @@ var _createClass = function () { function defineProperties(target, props) { for 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var Line = function () {
-    function Line(x1, y1, x2, y2) {
+    function Line(point1, point2) {
         _classCallCheck(this, Line);
 
-        this.x1 = x1;
-        this.y1 = y1;
-        this.x2 = x2;
-        this.y2 = y2;
+        this.point1 = point1;
+        this.point2 = point2;
     }
 
     _createClass(Line, [{
@@ -156,8 +150,8 @@ var Line = function () {
             //https://www.autodesk.com/techpubs/autocad/acadr14/dxf/line_al_u05_c.htm
             var s = "0\nLINE\n";
             s += "8\n" + this.layer.name + "\n";
-            s += "10\n" + this.x1 + "\n20\n" + this.y1 + "\n30\n0\n";
-            s += "11\n" + this.x2 + "\n21\n" + this.y2 + "\n31\n0\n";
+            s += "10\n" + this.point1[0] + "\n20\n" + this.point1[1] + "\n30\n" + (this.point1[2] || 0) + "\n";
+            s += "11\n" + this.point2[0] + "\n21\n" + this.point2[1] + "\n31\n" + (this.point2[2] || 0) + "\n";
             return s;
         }
     }]);
@@ -234,9 +228,42 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
+var Point = function () {
+    /**
+     * @param {array} point - Center point  [x, y, z]
+     */
+    function Point(point) {
+        _classCallCheck(this, Point);
+
+        this.point = point;
+    }
+
+    _createClass(Point, [{
+        key: "toDxfString",
+        value: function toDxfString() {
+            // https://www.autodesk.com/techpubs/autocad/acadr14/dxf/point_al_u05_c.htm
+            var s = "0\nPOINT\n";
+            s += "8\n" + this.layer.name + "\n";
+            s += "10\n" + this.point[0] + "\n20\n" + this.point[1] + "\n30\n" + (this.point[2] || 0) + "\n";
+            return s;
+        }
+    }]);
+
+    return Point;
+}();
+
+module.exports = Point;
+
+},{}],7:[function(require,module,exports){
+"use strict";
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
 var Polyline = function () {
     /**
-     * @param {array} points - Array of points like [ [x1, y1], [x2, y2]... ]
+     * @param {array} points - Array of points like [ [x1, y1, z1], [x2, y2, z2]... ]
      */
     function Polyline(points) {
         _classCallCheck(this, Polyline);
@@ -250,14 +277,21 @@ var Polyline = function () {
             //https://www.autodesk.com/techpubs/autocad/acad2000/dxf/polyline_dxf_06.htm
             //https://www.autodesk.com/techpubs/autocad/acad2000/dxf/vertex_dxf_06.htm
             var s = "0\nPOLYLINE\n";
+            var polylineFlag = 0;
+            var vertexFlag = 0;
+            if (this.points[0].length === 3) {
+                polylineFlag = 8;
+                vertexFlag = 32;
+            }
+
             s += "8\n" + this.layer.name + "\n";
-            s += "66\n1\n70\n0\n";
+            s += "66\n1\n70\n" + polylineFlag + "\n";
 
             for (var i = 0; i < this.points.length; ++i) {
                 s += "0\nVERTEX\n";
                 s += "8\n" + this.layer.name + "\n";
-                s += "70\n0\n";
-                s += "10\n" + this.points[i][0] + "\n20\n" + this.points[i][1] + "\n";
+                s += "70\n" + vertexFlag + "\n";
+                s += "10\n" + this.points[i][0] + "\n20\n" + this.points[i][1] + "\n30\n" + (this.points[i][2] || 0) + "\n";
             }
 
             s += "0\nSEQEND\n";
@@ -270,7 +304,7 @@ var Polyline = function () {
 
 module.exports = Polyline;
 
-},{}],7:[function(require,module,exports){
+},{}],8:[function(require,module,exports){
 "use strict";
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -279,17 +313,15 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 var Text = function () {
     /**
-     * @param {number} x1 - x
-     * @param {number} y1 - y
+     * @param {array} point - [x, y, z]
      * @param {number} height - Text height
      * @param {number} rotation - Text rotation
      * @param {string} value - the string itself
      */
-    function Text(x1, y1, height, rotation, value) {
+    function Text(point, height, rotation, value) {
         _classCallCheck(this, Text);
 
-        this.x1 = x1;
-        this.y1 = y1;
+        this.point = point;
         this.height = height;
         this.rotation = rotation;
         this.value = value;
@@ -302,7 +334,7 @@ var Text = function () {
             var s = "0\nTEXT\n";
             s += "8\n" + this.layer.name + "\n";
             s += "1\n" + this.value + "\n";
-            s += "10\n" + this.x1 + "\n20\n" + this.y1 + "\n30\n0\n";
+            s += "10\n" + this.point[0] + "\n20\n" + this.point[1] + "\n30\n" + (this.point[2] || 0) + "\n";
             s += "40\n" + this.height + "\n50\n" + this.rotation + "\n";
             return s;
         }
@@ -325,6 +357,7 @@ var Layer = require('./Layer');
 var Line = require('./Line');
 var Arc = require('./Arc');
 var Circle = require('./Circle');
+var Point = require('./Point');
 var Text = require('./Text');
 var Polyline = require('./Polyline');
 
@@ -374,14 +407,13 @@ var Drawing = function () {
         }
     }, {
         key: 'drawLine',
-        value: function drawLine(x1, y1, x2, y2) {
-            this.activeLayer.addShape(new Line(x1, y1, x2, y2));
+        value: function drawLine(p1, p2) {
+            this.activeLayer.addShape(new Line(p1, p2));
             return this;
         }
 
         /**
-         * @param {number} x1 - Center x
-         * @param {number} y1 - Center y
+         * @param {array} point - Center point  [x, y, z]
          * @param {number} r - radius
          * @param {number} startAngle - degree 
          * @param {number} endAngle - degree 
@@ -389,27 +421,36 @@ var Drawing = function () {
 
     }, {
         key: 'drawArc',
-        value: function drawArc(x1, y1, r, startAngle, endAngle) {
-            this.activeLayer.addShape(new Arc(x1, y1, r, startAngle, endAngle));
+        value: function drawArc(point, r, startAngle, endAngle) {
+            this.activeLayer.addShape(new Arc(point, r, startAngle, endAngle));
             return this;
         }
 
         /**
-         * @param {number} x1 - Center x
-         * @param {number} y1 - Center y
+         * @param {array} point - Center point  [x, y, z]
+         */
+
+    }, {
+        key: 'drawPoint',
+        value: function drawPoint(point) {
+            this.activeLayer.addShape(new Point(point));
+            return this;
+        }
+
+        /**
+         * @param {array} point - Center point  [x, y, z]
          * @param {number} r - radius
          */
 
     }, {
         key: 'drawCircle',
-        value: function drawCircle(x1, y1, r) {
-            this.activeLayer.addShape(new Circle(x1, y1, r));
+        value: function drawCircle(point, r) {
+            this.activeLayer.addShape(new Circle(point, r));
             return this;
         }
 
         /**
-         * @param {number} x1 - x
-         * @param {number} y1 - y
+         * @param {array} point - [x1, x2, x3]
          * @param {number} height - Text height
          * @param {number} rotation - Text rotation
          * @param {string} value - the string itself
@@ -417,13 +458,13 @@ var Drawing = function () {
 
     }, {
         key: 'drawText',
-        value: function drawText(x1, y1, height, rotation, value) {
-            this.activeLayer.addShape(new Text(x1, y1, height, rotation, value));
+        value: function drawText(point, height, rotation, value) {
+            this.activeLayer.addShape(new Text(point, height, rotation, value));
             return this;
         }
 
         /**
-         * @param {array} points - Array of points like [ [x1, y1], [x2, y2]... ] 
+         * @param {array} points - Array of points like [ [x1, y1, z1], [x2, y2, z2]... ]
          */
 
     }, {
@@ -519,4 +560,4 @@ Drawing.LAYERS = [{ name: '0', colorNumber: Drawing.ACI.WHITE, lineTypeName: 'CO
 
 module.exports = Drawing;
 
-},{"./Arc":1,"./Circle":2,"./Layer":3,"./Line":4,"./LineType":5,"./Polyline":6,"./Text":7}]},{},[]);
+},{"./Arc":1,"./Circle":2,"./Layer":3,"./Line":4,"./LineType":5,"./Point":6,"./Polyline":7,"./Text":8}]},{},[]);
