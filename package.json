@@ -9,7 +9,7 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "bundle": "browserify -r ./src/Drawing.js:Drawing -t babelify > ./dxf_bundle.js"
+    "bundle": "browserify --standalone dxf-writer -r ./src/Drawing.js:Drawing -t babelify > ./dxf_bundle.js"
   },
   "repository": {
     "type": "git",
